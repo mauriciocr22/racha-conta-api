@@ -2,102 +2,177 @@ import { describe, it, expect } from "vitest";
 import { Money } from "./money.js";
 
 describe("Money", () => {
+  describe("criação", () => {
+    it("cria a partir de centavos inteiros", () => {
+      const money = Money.fromCents(500);
 
-    it("cria a partir de centavos inteiros.", () => {
-        const money = Money.fromCents(500);
-    
-        expect(money.cents).toBe(500);
+      expect(money.cents).toBe(500);
     });
 
-    it("aceita valor 0", () => {
-        const money = Money.fromCents(0);
+    it("aceita zero", () => {
+      const money = Money.fromCents(0);
 
-        expect(money.cents).toBe(0);
+      expect(money.cents).toBe(0);
     });
 
     it("aceita valor negativo", () => {
-        const money = Money.fromCents(-500);
+      const money = Money.fromCents(-500);
 
-        expect(money.cents).toBe(-500);
+      expect(money.cents).toBe(-500);
     });
 
     it("rejeita valor não inteiro", () => {
-        expect(() => Money.fromCents(500.50)).toThrow()
+      expect(() => Money.fromCents(500.5)).toThrow();
     });
 
-    it("soma dois moneys", () => {
-        const a = Money.fromCents(500);
-        const b = Money.fromCents(400);
+    it("cria um valor de zero centavos com zero()", () => {
+      const money = Money.zero();
 
-        expect(a.add(b).cents).toBe(900);
+      expect(money.cents).toBe(0);
+    });
+  });
+
+  describe("operações", () => {
+    it("soma dois valores", () => {
+      const a = Money.fromCents(500);
+      const b = Money.fromCents(400);
+
+      expect(a.add(b).cents).toBe(900);
     });
 
-    it("subtrai dois moneys", () => {
-        const a = Money.fromCents(500);
-        const b = Money.fromCents(400);
+    it("subtrai dois valores", () => {
+      const a = Money.fromCents(500);
+      const b = Money.fromCents(400);
 
-        expect(a.subtract(b).cents).toBe(100);
-    });
-
-    it("soma nao altera valor original", () => {
-        const a = Money.fromCents(500);
-        const b = Money.fromCents(400);
-
-        a.add(b).cents;
-
-        expect(a.cents).toBe(500);
+      expect(a.subtract(b).cents).toBe(100);
     });
 
     it("subtrair valor maior resulta em negativo", () => {
-        const a = Money.fromCents(400);
-        const b = Money.fromCents(500);
+      const a = Money.fromCents(400);
+      const b = Money.fromCents(500);
 
-        expect(a.subtract(b).cents).toBe(-100)
+      expect(a.subtract(b).cents).toBe(-100);
     });
 
-    it("dois valores com os mesmos centavos são iguais.", () => {
-        const a = Money.fromCents(500);
-        const b = Money.fromCents(500);
+    it("somar não altera o valor original", () => {
+      const a = Money.fromCents(500);
+      const b = Money.fromCents(400);
 
-        expect(a.equals(b)).toBe(true)
+      a.add(b);
+
+      expect(a.cents).toBe(500);
+    });
+  });
+
+  describe("igualdade", () => {
+    it("dois valores com os mesmos centavos são iguais", () => {
+      const a = Money.fromCents(500);
+      const b = Money.fromCents(500);
+
+      expect(a.equals(b)).toBe(true);
     });
 
-    it("dois valores com centavos diferentes não são iguais.", () => {
-        const a = Money.fromCents(500);
-        const b = Money.fromCents(400);
+    it("dois valores com centavos diferentes não são iguais", () => {
+      const a = Money.fromCents(500);
+      const b = Money.fromCents(400);
 
-        expect(a.equals(b)).toBe(false)
-    })
+      expect(a.equals(b)).toBe(false);
+    });
+  });
 
+  describe("consultas", () => {
     it("informa se o valor é zero", () => {
-        const a = Money.fromCents(0);
+      const money = Money.fromCents(0);
 
-        expect(a.isZero()).toBe(true);
-    });
-
-    it("informa se o valor é negativo", () => {
-        const a = Money.fromCents(-500);
-
-        expect(a.isNegative()).toBe(true);
+      expect(money.isZero()).toBe(true);
     });
 
     it("informa se o valor é positivo", () => {
-        const a = Money.fromCents(500);
+      const money = Money.fromCents(500);
 
-        expect(a.isPositive()).toBe(true);
+      expect(money.isPositive()).toBe(true);
     });
 
-    it("checa se zero é diferente de positivo e negativo", () => {
-        const a = Money.fromCents(0);
+    it("informa se o valor é negativo", () => {
+      const money = Money.fromCents(-500);
 
-        expect(a.isNegative()).toBe(false);
-        expect(a.isPositive()).toBe(false);
-        expect(a.isZero()).toBe(true);
+      expect(money.isNegative()).toBe(true);
     });
 
-    it("cria um valor de zero centavos.", () => {
-        const a = Money.zero();
+    it("zero não é positivo nem negativo", () => {
+      const money = Money.fromCents(0);
 
-        expect(a.cents).toBe(0);
+      expect(money.isPositive()).toBe(false);
+      expect(money.isNegative()).toBe(false);
     });
+  });
+
+  describe("divisão em partes", () => {
+    it("divide 9000 centavos em 3 partes iguais", () => {
+      const money = Money.fromCents(9000);
+
+      const cents = money.split(3).map((part) => part.cents);
+
+      expect(cents).toEqual([3000, 3000, 3000]);
+    });
+
+    it("distribui a sobra a partir da primeira parte", () => {
+      const money = Money.fromCents(10000);
+
+      const cents = money.split(3).map((part) => part.cents);
+
+      expect(cents).toEqual([3334, 3333, 3333]);
+    });
+
+    it("divide 2 centavos em 3 partes", () => {
+      const money = Money.fromCents(2);
+
+      const cents = money.split(3).map((part) => part.cents);
+
+      expect(cents).toEqual([1, 1, 0]);
+    });
+
+    it("divide zero centavos em partes zeradas", () => {
+      const money = Money.fromCents(0);
+
+      const cents = money.split(2).map((part) => part.cents);
+
+      expect(cents).toEqual([0, 0]);
+    });
+
+    it("a soma das partes é igual ao valor original", () => {
+      const money = Money.fromCents(9001);
+
+      const total = money
+        .split(3)
+        .map((part) => part.cents)
+        .reduce((sum, cents) => sum + cents, 0);
+
+      expect(total).toBe(9001);
+    });
+
+    it("rejeita dividir em zero partes", () => {
+      const money = Money.fromCents(10000);
+
+      expect(() => money.split(0)).toThrow();
+    });
+
+    it("rejeita dividir em número negativo de partes", () => {
+      const money = Money.fromCents(10000);
+
+      expect(() => money.split(-2)).toThrow();
+    });
+
+    it("rejeita dividir em número não inteiro de partes", () => {
+      const money = Money.fromCents(30000);
+
+      expect(() => money.split(1.5)).toThrow();
+    });
+
+    it("rejeita dividir um valor negativo", () => {
+      const money = Money.fromCents(-101);
+
+      expect(() => money.split(2)).toThrow();
+    });
+  });
 });
