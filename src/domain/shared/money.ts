@@ -46,7 +46,7 @@ export class Money {
     }
 
     if (this.isNegative()) {
-      throw new Error("Não é possível dividir centavos negativos");
+      throw new Error("Não é possível dividir centavos negativos.");
     }
 
     const base = Math.floor(this.cents / parts);
@@ -62,5 +62,45 @@ export class Money {
     }
 
     return list;
+  }
+
+  allocate(proportions: number[]): Money[] {
+    if (proportions.length === 0) {
+      throw new Error("A proporção não deve ser vazia.");
+    }
+
+    if (
+      proportions.some(
+        (proportion) => proportion <= 0 || !Number.isInteger(proportion),
+      )
+    ) {
+      throw new Error(
+        "A proporção deve conter apenas números inteiros maiores que zero.",
+      );
+    }
+
+    if (this.isNegative()) {
+      throw new Error("Não é possível dividir centavos negativos.");
+    }
+
+    const proportionsSum = proportions.reduce(
+      (accumulator, current) => accumulator + current,
+      0,
+    );
+
+    const baseCents = proportions.map((proportion) =>
+      Math.floor((this.cents * proportion) / proportionsSum),
+    );
+
+    const baseSum = baseCents.reduce(
+      (accumulator, current) => accumulator + current,
+      0,
+    );
+
+    const remainder = this.cents - baseSum;
+
+    return baseCents.map(
+      (base, index) => new Money(index < remainder ? base + 1 : base),
+    );
   }
 }

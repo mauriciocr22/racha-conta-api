@@ -175,4 +175,30 @@ describe("Money", () => {
       expect(() => money.split(2)).toThrow();
     });
   });
+
+  describe("divisão por proporções", () => {
+    it("divide 10000 centavos nas proporções [2, 1, 1]", () => {
+      const money = Money.fromCents(10000);
+
+      const cents = money.allocate([2, 1, 1]).map((part) => part.cents);
+
+      expect(cents).toEqual([5000, 2500, 2500]);
+    });
+
+    it("divide 1000 centavos nas proporções [1, 2]", () => {
+      const money = Money.fromCents(1000);
+
+      const cents = money.allocate([1, 2]).map((part) => part.cents);
+
+      expect(cents).toEqual([334, 666]);
+    });
+
+    it("divide 5 centavos nas proporções [3, 7]", () => {
+      const money = Money.fromCents(5);
+
+      const cents = money.allocate([3, 7]).map((part) => part.cents);
+
+      expect(cents).toEqual([2, 3]);
+    });
+  });
 });
