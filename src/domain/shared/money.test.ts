@@ -200,5 +200,64 @@ describe("Money", () => {
 
       expect(cents).toEqual([2, 3]);
     });
+
+    it("com uma parte só, a única parte é o valor inteiro", () => {
+      const money = Money.fromCents(1000);
+
+      const cents = money.allocate([2]).map((cent) => cent.cents);
+
+      expect(cents).toEqual([1000]);
+    });
+
+    it("a soma das partes é igual ao valor original", () => {
+      const money = Money.fromCents(10000);
+
+      const cents = money.allocate([3, 3, 1]);
+      let aux = 0;
+      cents.forEach((cent) => {
+        aux += cent.cents;
+      });
+
+      expect(aux).toBe(10000);
+    });
+
+    it("proporções iguais dão o mesmo resultado que usar split", () => {
+      const money = Money.fromCents(10001);
+
+      const allocate = money.allocate([3, 3]);
+      const split = money.split(2);
+
+      expect(allocate).toEqual(split);
+    });
+
+    it("rejeita lista de proporção vazias", () => {
+      const money = Money.fromCents(10000);
+
+      expect(() => money.allocate([])).toThrow();
+    });
+
+    it("rejeita proporção zero", () => {
+      const money = Money.fromCents(10000);
+
+      expect(() => money.allocate([0])).toThrow();
+    });
+
+    it("rejeita proporção negativa", () => {
+      const money = Money.fromCents(10000);
+
+      expect(() => money.allocate([-1, 2])).toThrow();
+    });
+
+    it("rejeita proporção não inteira", () => {
+      const money = Money.fromCents(10000);
+
+      expect(() => money.allocate([2, 2.5])).toThrow();
+    });
+
+    it("rejeita dividir valor negativo", () => {
+      const money = Money.fromCents(-10000);
+
+      expect(() => money.allocate([1, 2])).toThrow();
+    });
   });
 });
