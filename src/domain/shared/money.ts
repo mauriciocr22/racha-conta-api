@@ -45,23 +45,9 @@ export class Money {
       throw new Error("O número de partes deve ser um inteiro maior que zero.");
     }
 
-    if (this.isNegative()) {
-      throw new Error("Não é possível dividir centavos negativos.");
-    }
+    const proportions = new Array<number>(parts).fill(1);
 
-    const base = Math.floor(this.cents / parts);
-    const remainder = this.cents % parts;
-    const list: Money[] = [];
-
-    for (let i = 0; i < parts; i++) {
-      if (i < remainder) {
-        list.push(new Money(base + 1));
-      } else {
-        list.push(new Money(base));
-      }
-    }
-
-    return list;
+    return this.allocate(proportions);
   }
 
   allocate(proportions: number[]): Money[] {
