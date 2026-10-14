@@ -37,7 +37,7 @@ describe("EqualSplit", () => {
     const shareList = shares.map((share) => {
       return [share.participantId, share.amount.cents];
     });
-    console.log(shareList);
+
     expect(shareList).toEqual([
       ["ana", 3334],
       ["bruno", 3333],
