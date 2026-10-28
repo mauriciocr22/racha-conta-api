@@ -1,9 +1,11 @@
+import { DomainError } from "./domain-error.js";
+
 export class Money {
   readonly cents: number;
 
   private constructor(cents: number) {
     if (!Number.isInteger(cents)) {
-      throw new Error("O valor deve ser um número inteiro.");
+      throw new DomainError("O valor deve ser um número inteiro.");
     }
     this.cents = cents;
   }
@@ -42,7 +44,9 @@ export class Money {
 
   split(parts: number): Money[] {
     if (parts <= 0 || !Number.isInteger(parts)) {
-      throw new Error("O número de partes deve ser um inteiro maior que zero.");
+      throw new DomainError(
+        "O número de partes deve ser um inteiro maior que zero.",
+      );
     }
 
     const proportions = new Array<number>(parts).fill(1);
@@ -52,7 +56,7 @@ export class Money {
 
   allocate(proportions: number[]): Money[] {
     if (proportions.length === 0) {
-      throw new Error("A proporção não deve ser vazia.");
+      throw new DomainError("A proporção não deve ser vazia.");
     }
 
     if (
@@ -60,13 +64,13 @@ export class Money {
         (proportion) => proportion <= 0 || !Number.isInteger(proportion),
       )
     ) {
-      throw new Error(
+      throw new DomainError(
         "A proporção deve conter apenas números inteiros maiores que zero.",
       );
     }
 
     if (this.isNegative()) {
-      throw new Error("Não é possível dividir centavos negativos.");
+      throw new DomainError("Não é possível dividir centavos negativos.");
     }
 
     const proportionsSum = proportions.reduce(

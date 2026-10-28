@@ -1,3 +1,4 @@
+import { DomainError } from "../../shared/domain-error.js";
 import { Money } from "../../shared/money.js";
 import type { Share } from "./share.js";
 import type { SplitMethod } from "./split-method.js";
@@ -7,10 +8,10 @@ export class ExactSplit implements SplitMethod {
 
   constructor(shares: Share[]) {
     if (shares.length === 0) {
-      throw new Error("A lista de participantes não deve ser vazia");
+      throw new DomainError("A lista de participantes não deve ser vazia");
     }
     if (shares.some((share) => !share.amount.isPositive())) {
-      throw new Error("Os valores devem ser maiores que zero.");
+      throw new DomainError("Os valores devem ser maiores que zero.");
     }
 
     this.shares = shares;
@@ -29,12 +30,12 @@ export class ExactSplit implements SplitMethod {
     const difference = sharesSum.subtract(total);
 
     if (difference.isPositive()) {
-      throw new Error(
+      throw new DomainError(
         `A soma dos valores excede o total em ${difference.cents} centavos.`,
       );
     }
 
-    throw new Error(
+    throw new DomainError(
       `Faltam ${Math.abs(difference.cents)} centavos para a soma atingir o valor total.`,
     );
   }

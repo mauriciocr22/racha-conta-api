@@ -1,3 +1,4 @@
+import { DomainError } from "../../shared/domain-error.js";
 import type { Money } from "../../shared/money.js";
 import type { Share } from "./share.js";
 import type { SplitMethod } from "./split-method.js";
@@ -7,7 +8,7 @@ export class EqualSplit implements SplitMethod {
 
   constructor(participantIds: string[]) {
     if (participantIds.length === 0) {
-      throw new Error("A lista de participantes não pode ser vazia.");
+      throw new DomainError("A lista de participantes não pode ser vazia.");
     }
     this.participantIds = participantIds;
   }

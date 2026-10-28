@@ -1,3 +1,4 @@
+import { DomainError } from "../../shared/domain-error.js";
 import { Money } from "../../shared/money.js";
 import type { Share } from "./share.js";
 import type { SplitMethod } from "./split-method.js";
@@ -12,7 +13,7 @@ export class PercentageSplit implements SplitMethod {
 
   constructor(percentagesList: ParticipantPercentage[]) {
     if (percentagesList.length === 0) {
-      throw new Error("A lista de participantes não deve ser vazia.");
+      throw new DomainError("A lista de participantes não deve ser vazia.");
     }
     if (
       percentagesList.some(
@@ -21,7 +22,7 @@ export class PercentageSplit implements SplitMethod {
           !Number.isInteger(percentage.percentage),
       )
     ) {
-      throw new Error(
+      throw new DomainError(
         "As porcentagens de cada participante devem ser inteiras e positivas.",
       );
     }
@@ -31,7 +32,7 @@ export class PercentageSplit implements SplitMethod {
       0,
     );
     if (sum !== 100) {
-      throw new Error("A soma das porcentagens deve ser igual a 100.");
+      throw new DomainError("A soma das porcentagens deve ser igual a 100.");
     }
 
     this.percentagesList = percentagesList;
