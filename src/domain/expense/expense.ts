@@ -3,7 +3,7 @@ import type { Money } from "../shared/money.js";
 import type { Share } from "./split/share.js";
 import type { SplitMethod } from "./split/split-method.js";
 
-type CreateExpenseProps = {
+export type CreateExpenseProps = {
   authorId: string;
   payerId: string;
   description: string;
