@@ -42,7 +42,13 @@ export class Group {
     return this._members.includes(userId);
   }
 
-  addMember(requesterId: string, newMemberId: string): void {
+  addMember({
+    requesterId,
+    newMemberId,
+  }: {
+    requesterId: string;
+    newMemberId: string;
+  }): void {
     if (requesterId !== this.creatorId) {
       throw new DomainError(
         "Apenas o criador do grupo pode adicionar novos membros.",
